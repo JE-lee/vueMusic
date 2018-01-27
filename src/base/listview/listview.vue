@@ -1,54 +1,174 @@
 <template>
 	<scroll
-		class="listview">
-		<ul >
+		ref="scroll"
+		class="listview"
+    :listenScroll=true
+    :probeType=3
+    @scroll="onScroll"
+		>
+		<ul>
       <li v-for="group in data" class="list-group" ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <uL>
-          <li @click="selectItem(item)" v-for="item in group.items" class="list-group-item">
+          <li  v-for="item in group.items" class="list-group-item" @click="selectItem(item)">
             <img class="avatar" v-lazy="item.avatar">
             <span class="name">{{item.name}}</span>
           </li>
         </uL>
       </li>
     </ul>
-
-    <div class="list-shortcut">
+    
+    <div class="list-shortcut"
+    		 @touchstart.stop.prevent="onShortcutTouchStart"
+         @touchmove.stop.prevent="onShortcutTouchMove">
       <ul>
         <li v-for="(item, index) in shortcutList" :data-index="index" class="item"
-            :class="{'current':currentIndex===index}">{{item}}
+            :class="{'current':currentIndex===index}">
+            {{item}}
         </li>
       </ul>
+    </div>
+    <!--顶部-->
+    <div class="list-fixed" ref="fixed" v-show="fixedTitle">
+      <div class="fixed-title">{{fixedTitle}} </div>
+    </div>
+    <div v-show="!data.length" class="loading-container">
+      <loading></loading>
     </div>
 
 	</scroll>
 </template>
 <script>
 import Scroll from 'base/scroll/scroll'
+import Loading from 'base/loading/loading'
+const SHORTCUT_HEIGHT = 18
+const FIXEDTITLE_HEIGHT = 30
 export default {
 	props:{
 		data:{
 			type: Array,
-			default: []
+			default: [],
 		}
 	},
 	components:{
-		Scroll
+		Scroll,
+    Loading
 	},
 	data(){
 		return {
-			currentIndex:0,
+			currentIndex:-1,
+      fixedTitle:''
 		}
 		
 	},
+	created(){
+		this.touch={}
+	},
 	computed:{
-		
 		shortcutList(){
 			return this.data.map((item)=>{
 				return item.title.substr(0,1)
 			})
 		}
-	}
+	},
+  mounted(){
+   
+  },
+	methods:{
+    selectItem(item){
+      this.$emit('select',item)
+    },
+    onScroll(position){
+      let scrollY = 0 - position.y
+      this.currentIndex = this._getIndexFromY(scrollY)
+      let upperLimit = this.range[this.currentIndex + 1]
+       if(scrollY >= (upperLimit - 30) && scrollY < upperLimit){
+        this.$refs.fixed.style.transform = `translate3d(0,-${30+scrollY-upperLimit}px,0)`
+      }else{
+        this.$refs.fixed.style.transform = `translate3d(0,0,0)`
+      }
+
+    },
+		onShortcutTouchStart(e){
+			let index = e.target.getAttribute('data-index')
+			//因为得到的是一个字符串
+			this.touch.index = parseInt(index)
+			this.touch.y = this._getPageY(e)
+			this._scrollTo(this.touch.index)
+		},
+		onShortcutTouchMove(e){
+			if(isNaN(this.touch.index)){
+				let index = this._getTargetFromPoint(e).getAttribute('data-index')
+				this.touch.index = parseInt(index)
+				return
+			}
+     
+			let y = this._getPageY(e)
+			let delta = Math.floor( (y - this.touch.y) / SHORTCUT_HEIGHT)
+			let index = (this.touch.index  ? this.touch.index : 0) + delta
+			this._scrollTo(index)
+      
+		},
+    _initListRange(){
+      this.range = [0]
+      let y = 0
+      let listgroups = this.$refs.listGroup
+      listgroups.forEach((ele,index)=>{
+        y += ele.offsetHeight
+        this.range.push(y)
+      })
+      if( this.currentIndex < 0) this.currentIndex = 0
+    },
+    _getIndexFromY(scrollY){
+      let range = this.range
+          length = this.range.length
+      if(scrollY < 0) return -1
+      if(scrollY > range[length - 1]) return (length - 2)
+      for(let i = 0;i<length - 1 ; i++){
+        if(scrollY >= range[i] && scrollY < range[i+1]){
+          return i
+        }
+      }
+      return 0
+    },
+		_scrollTo(index){
+			if(index < 0 || isNaN(index)){
+        return 
+      }
+      if(index > this.shortcutList.length - 1){
+        index  = this.shortcutList.length - 1
+      }
+      
+			//这里最好给scrollToElement一个动画时间。vue-lazyload组件能够响应
+			let listGroups = this.$refs.listGroup
+			this.$refs.scroll.scrollToElement(listGroups[index],1)
+      this.currentIndex = index
+		},
+		_getPageY(e){
+			return e.touches[0].pageY
+		},
+		_getTargetFromPoint(e){
+			let x = e.touches[0].pageX
+			let y = e.touches[0].pageY
+			return document.elementFromPoint(x,y)
+		}
+		
+	},
+  watch:{
+    data:function(n,o){
+      setTimeout(()=>{
+        this._initListRange();
+      },20)
+    },
+    currentIndex:function(n,o){
+      if(n < 0){
+        this.fixedTitle = ''
+        return 
+      }
+      this.fixedTitle = this.data[n].title
+    }
+  },
+
 }
 </script>
 <style type="text/stylus" rel='stylesheet/sytlus' lang='stylus' scoped>
