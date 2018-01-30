@@ -57,6 +57,8 @@
                 //console.log(res.data.data.list)
                 this.discList = res.data.data.list
               }
+            }).catch((err)=>{
+              console.log("err",err)
             })
         }
     	},

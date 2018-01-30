@@ -25,7 +25,4 @@
 /* eslint-disable no-new */
 <style scoped rel="stylesheet/stylus" lang="stylus">
     @import "~common/stylus/variable"
-    
-    
-   
 </style>
