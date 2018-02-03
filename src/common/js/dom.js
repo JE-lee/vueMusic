@@ -29,7 +29,7 @@ let vendor = (()=>{
 	}
 	for(let key in transformNames){
 		if(elementStyle[transformNames[key]] !== undefined){
-			console.log("key",key)
+			//console.log("key",key)
 			return key
 		}
 	}false

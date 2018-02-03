@@ -34,6 +34,7 @@
 	import Scroll from 'base/scroll/scroll'
 	import Loading from 'base/loading/loading'
 	import {prefixStyle} from 'common/js/dom'
+	import {mapActions} from 'vuex'
 	const transform = prefixStyle('transform')
 	const REVERSED_HEIGHT = 48
 		export default {
@@ -87,8 +88,15 @@
 					this.scrollY = pos.y
 				},
 				selectItem(item,index){
-					console.log("item,index",item,index)
-				}
+					//action
+					this.selectPlay({
+						list:this.songs,
+						index:index
+					})
+				},
+				...mapActions([
+					'selectPlay'
+				])
 			},
 			watch:{
 				scrollY(newY){
