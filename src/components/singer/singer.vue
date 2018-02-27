@@ -1,6 +1,6 @@
 <template>
-	<div class="singer">
-		<listview :data="singerList" @select="select"></listview>
+	<div class="singer" ref="singer">
+		<listview :data="singerList" @select="select" ref="list"></listview>
 		<router-view></router-view>
 	</div>
 </template>
@@ -10,7 +10,9 @@ import {ERR_OK} from 'api/config'
 import Listview from 'base/listview/listview'
 import Singer from 'common/js/singer'
 import {mapMutations} from 'vuex'
+import {playListMixin} from 'common/js/mixin'
 export default {
+	mixins:[playListMixin],
 	data(){
 		return {
 			singerList:[]
@@ -21,12 +23,16 @@ export default {
 			
 	},
 	methods:{
+		handlePlayList(list){
+			const bottom = list.length > 0? '60px' :''
+			this.$refs.singer.style.bottom = bottom
+			this.$refs.list.refresh()
+		},
 		...mapMutations({
 			setSinger:'SET_SINGER'
 		}),
 		select(singer){
 			//路由跳转
-			//console.log("select")
 			this.$router.push({
 				path:`/singer/${singer.id}`
 			})
@@ -35,7 +41,7 @@ export default {
 		_getSingerList(){
 			getSingerList().then((res)=>{
 				if(res.code === ERR_OK){
-						this.singerList = this._normalizeSingerList(res.data.list)
+					this.singerList = this._normalizeSingerList(res.data.list)
 				}
 			})
 		},
@@ -43,11 +49,11 @@ export default {
 
 			let totalList = [
 				{
-						title:'热门',
-						items:[]
+					title:'热门',
+					items:[]
 				}
 			]	
-			//将100条歌手的书籍
+			//将100条歌手的数据排序
 			let normalCollect = {}
 			list.forEach((item,index)=>{
 				//将前面10条数据放到热门

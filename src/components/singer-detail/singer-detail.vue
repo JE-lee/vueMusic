@@ -29,14 +29,15 @@ export default {
   },
   methods:{
 	  _getSingerDetail(){
+		  //如果没有state中的没有传入singer，那么就跳回到歌手列表页面
 		  if(!this.singer.id){
 			  this.$router.push('/singer')
 			  return 
 		  }
 		  getSingerDetail(this.singer.id).then((res)=>{
-			
 			  if(ERR_OK === res.code){
 					let list = res.data.list
+					//得到歌曲列表
 					this.songList = this._normalizeSongs(list)
 					//console.log("this.songlist",this.songList)
 				}

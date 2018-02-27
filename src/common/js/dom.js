@@ -32,8 +32,8 @@ let vendor = (()=>{
 			//console.log("key",key)
 			return key
 		}
-	}false
-	return 
+	}
+	return false
 })()
 export function prefixStyle(style){
 	if(vendor === false)

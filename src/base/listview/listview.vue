@@ -7,10 +7,10 @@
     @scroll="onScroll"
 		>
 		<ul>
-      <li v-for="group in data" class="list-group" ref="listGroup">
+      <li v-for="group in data" class="list-group" ref="listGroup" >
         <h2 class="list-group-title">{{group.title}}</h2>
         <uL>
-          <li  v-for="item in group.items" class="list-group-item" @click="selectItem(item)">
+          <li  v-for="(item,index) in group.items" class="list-group-item" @click="selectItem(index,item)">
             <img class="avatar" v-lazy="item.avatar">
             <span class="name">{{item.name}}</span>
           </li>
@@ -29,7 +29,7 @@
       </ul>
     </div>
     <!--顶部-->
-    <div class="list-fixed" ref="fixed" v-show="fixedTitle">
+    <div class="list-fixed" ref="fixed" v-show="showFixedTitle">
       <div class="fixed-title">{{fixedTitle}} </div>
     </div>
     <div v-show="!data.length" class="loading-container">
@@ -57,7 +57,8 @@ export default {
 	data(){
 		return {
 			currentIndex:-1,
-      fixedTitle:''
+      fixedTitle:'',
+      showFixedTitle:false
 		}
 		
 	},
@@ -75,15 +76,20 @@ export default {
    
   },
 	methods:{
-    selectItem(item){
+    selectItem(index,item){
       this.$emit('select',item)
     },
     onScroll(position){
       let scrollY = 0 - position.y
+      if(scrollY < 0){
+        this.showFixedTitle =false
+      }else{
+        this.showFixedTitle = true
+      }
       this.currentIndex = this._getIndexFromY(scrollY)
       let upperLimit = this.range[this.currentIndex + 1]
-       if(scrollY >= (upperLimit - 30) && scrollY < upperLimit){
-        this.$refs.fixed.style.transform = `translate3d(0,-${30+scrollY-upperLimit}px,0)`
+       if(scrollY >= (upperLimit - FIXEDTITLE_HEIGHT) && scrollY < upperLimit){
+        this.$refs.fixed.style.transform = `translate3d(0,-${ FIXEDTITLE_HEIGHT + scrollY-upperLimit}px,0)`
       }else{
         this.$refs.fixed.style.transform = `translate3d(0,0,0)`
       }
@@ -97,6 +103,7 @@ export default {
 			this._scrollTo(this.touch.index)
 		},
 		onShortcutTouchMove(e){
+      //有可能是点到了padding上面
 			if(isNaN(this.touch.index)){
 				let index = this._getTargetFromPoint(e).getAttribute('data-index')
 				this.touch.index = parseInt(index)
@@ -122,7 +129,7 @@ export default {
     _getIndexFromY(scrollY){
       let range = this.range
           length = this.range.length
-      if(scrollY < 0) return -1
+      if(scrollY < 0) return 0
       if(scrollY > range[length - 1]) return (length - 2)
       for(let i = 0;i<length - 1 ; i++){
         if(scrollY >= range[i] && scrollY < range[i+1]){
@@ -151,7 +158,10 @@ export default {
 			let x = e.touches[0].pageX
 			let y = e.touches[0].pageY
 			return document.elementFromPoint(x,y)
-		}
+    },
+    refresh(){
+      this.$refs.scroll.refresh()
+    }
 		
 	},
   watch:{

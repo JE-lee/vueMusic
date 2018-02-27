@@ -1,5 +1,4 @@
 /* eslint-disable no-new */
-
 import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
@@ -10,9 +9,9 @@ import vueLazyload from 'vue-lazyload'
 import 'common/stylus/index.styl'
 
 Vue.config.productionTip = false;
-Vue.use(vueLazyload,{
-	loading:require('common/image/default.png'),
-	attempt:1
+Vue.use(vueLazyload, {
+  loading : require('common/image/default.png'),
+  attempt : 1
 })
 fastclick.attach(document.body);
 

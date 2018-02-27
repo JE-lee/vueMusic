@@ -7,14 +7,13 @@
     <div class="dots">
       <span class="dot" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots"></span>
     </div>
-    
-   
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import BScroll from 'better-scroll'
   import {addClass} from 'common/js/dom'
+  //better-scroll 只对{'wrapper'}中的第一个子元素滚动，后面的元素不滚动
   export default {
     data(){
       return {
@@ -65,7 +64,8 @@
             item.style.width = sliderWidth + 'px';
             sliderGroupWidth += sliderWidth;
           }
-          //isResize == true的时候，this.children的长度已经加了2了，所以这里就不加2倍了。
+          //isResize == true的时候，this.children的长度已经加了2了，也就是说上面slider-group的子元素的个数
+          //在第一次初始化slider之后+2le，所以这里就不加2倍了。
           if(this.loop && !isResize){
             sliderGroupWidth += sliderWidth*2;
           }
@@ -80,12 +80,11 @@
             snap:{
               loop:this.loop,
               threshold:0.3,
-              speed:400
+             // speed:400
             },
             click:true
           })
-
-          this.slider.on('scrollEnd',()=>{
+          this.slider.on('scrollEnd',({x,y})=>{
             let current = this.slider.getCurrentPage().pageX
             this.currentPageIndex = current;
             if(this.autoPlay){
@@ -95,6 +94,7 @@
           })
       },
       _initDots(){
+        //这个如果在resize之后在调用这个方法，会增加多两个点
         this.dots = new Array(this.children.length)
       },
       _play(){

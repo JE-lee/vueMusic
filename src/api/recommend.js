@@ -16,12 +16,11 @@ export function getRecommend(){
 		uin:0,
 		needNewCode:1
 	});
-	return jsonp(url,data,options)
-		
+	return jsonp(url,data,options)	
 }
 
 export function getDissList(){
-	const url = BASE_URL_2 + '/getDiscList';
+	const url =  '/getDiscList';
 	const data = Object.assign({},commonParams,{
 		g_tk:1928093487,
 		inCharset:'utf-8',
@@ -36,7 +35,6 @@ export function getDissList(){
 		needNewCode:0,
 		categoryId:10000000,
 		rnd:Math.random(),
-		
 	});
 	 return axios.get(url,{
 		params:data

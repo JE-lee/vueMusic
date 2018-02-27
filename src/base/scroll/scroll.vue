@@ -8,6 +8,7 @@
   import BScroll from 'better-scroll'
 
   export default {
+    //@beforeScroll:Boolean 表示是否监听开始滚动事件
     props: {
       probeType: {
         type: Number,
@@ -39,7 +40,6 @@
       }
     },
     mounted() {
-      
       setTimeout(() => {
         this._initScroll()
       }, 20)

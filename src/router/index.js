@@ -6,7 +6,6 @@ import Singer from 'components/singer/singer'
 import Rank from 'components/rank/rank'
 import SingerDetail from 'components/singer-detail/singer-detail'
 
-/* eslint-disable */
 Vue.use(Router)
 
 export default new Router({
@@ -21,13 +20,13 @@ export default new Router({
   	},
   	{
   		path:'/singer',
-			component:Singer,
-			children:[
-				{
-					path:':id',
-					component:SingerDetail
-				}
-			]
+		component:Singer,
+		children:[
+			{
+				path:':id',
+				component:SingerDetail
+			}
+		]
   	},
   	{
   		path:'/rank',
@@ -37,6 +36,6 @@ export default new Router({
   		path:'/search',
   		component:Search
 		},
-		//歌手详情
+		
   ]
 })

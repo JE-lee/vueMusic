@@ -5,7 +5,8 @@
       <div class="progress-btn-wrapper" ref="progressBtn"
         @touchstart.prevent="onProgressBtnStart"
         @touchmove.prevent="onProgressBtnMove"
-        @touchend.prevent="onProgressBtnEnd">
+        @touchend.prevent="onProgressBtnEnd"
+        >
         <div class="progress-btn"></div>
       </div>
     </div>
@@ -32,9 +33,16 @@
       this.touch = {}
     },
     methods:{
+      onClick1(e){
+        console.log("btn click")
+      },
       onProgressBarClick(e){
         const progressbarWidth = this.$refs.progressBar.clientWidth  - 16
         let persent = e.offsetX / progressbarWidth
+        //这里当我们点击progressBtn的时候，e.offsetX获取不对
+        //在progressBtn 的touch事件中禁用了默认行为，则btn的点击不会冒泡到progress中，
+        //具体表现为点击progressBtn没有任何反应
+        //console.log("e click",e.offsetX)
         this._offset(e.offsetX)
         antiShake(()=>{
           this.$emit('persentChange',persent)
