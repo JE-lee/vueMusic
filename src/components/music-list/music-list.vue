@@ -67,7 +67,7 @@
 		created(){
 			this.probeType = 3 //实时派发scroll事件
 			this.listenScroll = true
-			this.rank = false
+			
 		},
 		mounted(){
 			//计算bgImage 的高度，然后将list这个滚动区域的top值设为bgImage的高度

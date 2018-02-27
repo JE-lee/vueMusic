@@ -41,3 +41,23 @@ export function getDissList(){
 	});
 	 
 }
+
+
+export function getSongList(disstid) {
+	//const url = 'https://c.y.qq.com/qzone/fcg-bin/fcg_ucc_getcdinfo_byids_cp.fcg'
+	const url = '/api/disc-song-list'
+	const data = Object.assign({}, commonParams, {
+		disstid,
+		type: 1,
+		json: 1,
+		utf8: 1,
+		onlysong: 0,
+		platform: 'yqq',
+		hostUin: 0,
+		needNewCode: 0,
+		format:'json',
+	})
+	//这个接口qq返回的有点问题。如果是jsonpCallback = '__jp1'，那么返回的函数名是jp1,
+	//所以在这里显示地指定jsonp的回调函数为'songlistCallback'
+	return jsonp(url, data, Object.assign({},options,{name:'songlistCallback'}))
+}

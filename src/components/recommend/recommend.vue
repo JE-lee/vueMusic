@@ -28,6 +28,7 @@
         </div>
       </div>
   	</scroll>
+    <router-view></router-view>
   </div>
 </template>
 <script >
@@ -36,50 +37,61 @@
 	import Slider from 'base/slider/slider'
   import Scroll from 'base/scroll/scroll'
   import {playListMixin} from 'common/js/mixin'
-    export default  {
-      mixins:[playListMixin],
-    	created(){
-    		this._getRecommend();
-        this._getDissList();
-    	},
-    	methods:{
-        handlePlayList(list){
-          const bottom = list.length >0?'60px':0
-          this.$refs.recommend.style.bottom = bottom
-          this.$refs.scroll.refresh()
-        },
-    		_getRecommend(){
-    			getRecommend().then((res)=>{
-    				if(ERR_OK === res.code){
-    					//console.log(res.data.slider);
-    					this.recommends = res.data.slider;
-    				}
-    			})
-    		},
-        _getDissList(){
-            getDissList().then((res)=>{
-              if(ERR_OK === res.data.code){
-                //console.log(res.data.data.list)
-                this.discList = res.data.data.list
-              }
-            }).catch((err)=>{
-              console.log("err",err)
-            })
-        }
-    	},
-    	data(){
-    		return {
-    			recommends:[],
-    			discList:[],
+  import {mapMutations} from 'vuex'
+  export default  {
+    mixins:[playListMixin],
+    created(){
+      this._getRecommend();
+      this._getDissList();
+    },
+    methods:{
+      selectItem(item){
+        this.$router.push({
+          path:`/recommend/${item.dissid}`
+        })
+        this.setDisc(item)
+        
+      },
+      handlePlayList(list){
+        const bottom = list.length >0?'60px':0
+        this.$refs.recommend.style.bottom = bottom
+        this.$refs.scroll.refresh()
+      },
+      _getRecommend(){
+        getRecommend().then((res)=>{
+          if(ERR_OK === res.code){
+            //console.log(res.data.slider);
+            this.recommends = res.data.slider;
+          }
+        })
+      },
+      _getDissList(){
+          getDissList().then((res)=>{
+            if(ERR_OK === res.data.code){
+              //console.log(res.data.data.list)
+              this.discList = res.data.data.list
+            }
+          }).catch((err)=>{
+            console.log("err",err)
+          })
+      },
+      ...mapMutations({
+        setDisc:'SET_DISC'
+      })
+    },
+    data(){
+      return {
+        recommends:[],
+        discList:[],
 
 
-    		}
-    	},
-    	components:{
-    		Slider,
-        Scroll
-    	}
-	}
+      }
+    },
+    components:{
+      Slider,
+      Scroll
+    }
+  }
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
