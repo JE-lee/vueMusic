@@ -454,6 +454,7 @@
     },
     watch:{
       currentSong(){
+        //console.log('currentSong',this.currentSong)
         if(this.currentLyric){
           this.currentLyric.stop()
         }

@@ -1,7 +1,7 @@
 import {getLynic} from 'api/song.js'
 import {ERR_OK} from 'api/config'
 import {Base64} from 'js-base64'
-export default class Song{
+export  class Song{
     constructor({id,mid,singer,name,album,duration,image,url}){
         this.id = id
         this.mid = mid
@@ -46,7 +46,8 @@ export function createSong(musicData){
     })
 }
 
-function filterSinger(singerList){
+ function filterSinger(singerList){
+    if(typeof singerList === 'string') return singerList
     let ret = []
     singerList.forEach((singer)=>{
         ret.push(singer.name)

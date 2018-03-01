@@ -20,7 +20,7 @@ export function getRecommend(){
 }
 
 export function getDissList(){
-	const url =  '/getDiscList';
+	const url =  '/api/getDiscList';
 	const data = Object.assign({},commonParams,{
 		g_tk:1928093487,
 		inCharset:'utf-8',

@@ -26,6 +26,7 @@ export default {
   },
   created(){
 		this._getSingerDetail()
+		console.log('singer',this.singer)
   },
   methods:{
 	  _getSingerDetail(){
