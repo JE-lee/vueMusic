@@ -19,7 +19,7 @@
     <div class="bg-layer" ref="layer"></div>
     <scroll :data="songs" @scroll="scroll"
             :listen-scroll="listenScroll" :probe-type="probeType" class="list" ref="list">
-      <div class="song-list-wrapper" ref="listwrapper">
+      <div class="song-list-wrapper" >
         <song-list :songs="songs" :rank="rank" @select="selectItem"></song-list>
       </div>
       <div v-show="!songs.length" class="loading-container">
@@ -225,7 +225,7 @@
 	.bg-layer
 		position: relative
 		height: 100%
-		background: $color-background
+		background:$color-background
 	.list
 		position: fixed
 		top: 0
@@ -234,7 +234,6 @@
 		background: $color-background
 		.song-list-wrapper
 			padding: 20px 30px
-			
 		.loading-container
 			position: absolute
 			width: 100%

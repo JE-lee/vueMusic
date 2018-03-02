@@ -22,7 +22,8 @@
 			Player
 	  },
 	  created(){
-	  }
+	  },
+	 
 }
 </script>
 /* eslint-disable no-new */

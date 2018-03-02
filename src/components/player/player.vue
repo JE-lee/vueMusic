@@ -4,8 +4,9 @@
                 @enter="enter"
                 @after-enter="afterEnter"
                 @leave="leave"
-                @after-leave = "afterLeave"
-                appear>
+                @after-leave="afterLeave"
+                
+    >
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
           <img width="100%" height="100%" :src="currentSong.image">
@@ -74,7 +75,8 @@
         </div>
         
       </div>
-		</transition>
+    </transition>
+	
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="showFullPlayer">
         <div class="icon">
@@ -95,7 +97,7 @@
       </div>
     </transition>
     <audio ref="audio" :src="currentSong.url " @canplay="ready" @error="error" @timeupdate="updateTime"
-    @ended="end"></audio>
+    @ended="end" autoplay></audio>
   </div>
 </template>
 
@@ -120,7 +122,8 @@
         currentLyric:null,
         currentLineNum:0,
         currentShow:'cd',
-        playingLyric:''
+        playingLyric:'',
+        first__:true
       }
     },
     computed:{
@@ -153,9 +156,17 @@
     created(){
       this.touch = {}
     },
+    mounted(){
+     
+    },
     methods:{
+      __play(){
+        //console.log('touchstart')
+        this.$refs.audio.play()
+        window.removeEventListener('touchstart',this.__play)
+        this.$refs.audio.currentTime = 0
+      },
       onMiddleLClick(e){
-        
         if('cd' === this.currentShow){
           let lyric = this.$refs.lyricList.$el
           let cd = this.$refs.middleL
@@ -293,13 +304,17 @@
         return `${this._completeNumber(minute)}:${this._completeNumber(second)}`
       },
       updateTime(e){
-        this.currentTime = e.target.currentTime | 0
+        this.currentTime = e.target.currentTime 
       },
       error(){
         this.audioReady = true
       },
       ready(){
         this.audioReady = true
+        if(this.first__){
+           window.addEventListener('touchstart',this.__play)
+           this.first = false
+        }
       },
       end(){
         //歌曲播放完毕
@@ -349,7 +364,6 @@
 
       },
       togglePlaying(){
-        //console.log('this.playing',this.playing)
         this.setPlayingState(!this.playing)
         this.currentLyric.togglePlay()
       },
@@ -374,7 +388,10 @@
           }
         })
 
-        animation.runAnimation(this.$refs.cdWrapper,'move',done)
+        animation.runAnimation(this.$refs.cdWrapper,'move',()=>{
+          console.log('enter done 2')
+          done()
+        })
       
       },
       afterEnter(){
@@ -385,7 +402,11 @@
         let {x,y,scale} = this._getPosAndDemasion()
         this.$refs.cdWrapper.style.transition = 'all 0.4s'
         this.$refs.cdWrapper.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`
-        this.$refs.cdWrapper.addEventListener('transitionend',done)
+        clearTimeout(this.timer__)
+        this.timer__ = setTimeout(()=>{
+          done()
+        },400)
+       
       },
       afterLeave(){
         this.$refs.cdWrapper.style.transition = ''
@@ -458,12 +479,12 @@
         if(this.currentLyric){
           this.currentLyric.stop()
         }
-        this.$nextTick(()=>{
+        clearTimeout(this.timer)
+        this.timer = setTimeout(()=>{
           this.$refs.audio.play()
           //获取歌词
           this._getLyric()
-
-        })
+        },1000)
       },
       playing(n,o){
         const audio = this.$refs.audio

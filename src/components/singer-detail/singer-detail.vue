@@ -1,6 +1,6 @@
 <template>
 	<transition name="slide">
-		<music-list :songs="songList" :title="title" :bg-image="bgImage"></music-list>
+		<music-list :songs="songList" :title="title" :bgImage="bgImage"></music-list>
 	</transition>
 </template>
 <script>
@@ -26,7 +26,7 @@ export default {
   },
   created(){
 		this._getSingerDetail()
-		console.log('singer',this.singer)
+		//console.log('singer',this.singer)
   },
   methods:{
 	  _getSingerDetail(){
@@ -60,10 +60,10 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-@import '~common/stylus/variable'
-.slide-enter-active,.slide-leave-active
-	transition:all 0.3s
-.slide-enter,.slide-leave-to
-	transform:translate3d(100%,0,0)
+
+	.slide-enter-active,.slide-leave-active
+		transition:all 0.45s
+	.slide-enter,.slide-leave-to
+		transform:translate3d(100%,0,0)
 </style>
 

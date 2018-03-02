@@ -83,7 +83,7 @@
     .content
       flex: 1
       line-height: 20px
-      overflow: hidden
+      overflow:hidden
       .name
         no-wrap()
         color: $color-text
