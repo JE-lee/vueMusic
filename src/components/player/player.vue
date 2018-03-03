@@ -106,8 +106,10 @@
   import {shuffle} from 'common/js/util'
   import Lyric from 'lyric-parser'
   import Scroll from 'base/scroll/scroll'
+  import {audioAutoplay} from 'common/js/audioAutoplay'
   const transform = prefixStyle('transform')
   const transitionDuration = prefixStyle('transitionDuration')
+
   
   export default {
     data(){
@@ -152,15 +154,12 @@
       this.touch = {}
     },
     mounted(){
-     
+      audioAutoplay(this.$refs.audio,()=>{
+        console.log('autoplay')
+        this.$refs.audio.currentTime = 0
+      })
     },
     methods:{
-      __play(){
-       
-        this.$refs.audio.play()
-        window.removeEventListener('touchstart',this.__play)
-        this.$refs.audio.currentTime = 0
-      },
       onMiddleLClick(e){
         if('cd' === this.currentShow){
           let lyric = this.$refs.lyricList.$el
@@ -306,10 +305,6 @@
       },
       ready(){
         this.audioReady = true
-        if(this.first__){
-           window.addEventListener('touchstart',this.__play)
-           this.first__ = false
-        }
       },
       end(){
         //歌曲播放完毕
@@ -382,9 +377,7 @@
             }
           }
         })
-
         animation.runAnimation(this.$refs.cdWrapper,'move',()=>{
-          console.log('enter done 2')
           done()
         })
       
