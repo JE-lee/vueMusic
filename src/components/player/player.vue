@@ -63,9 +63,11 @@
             <div class="icon i-right" :class="disableCls">
               <i @click="next" class="icon-next"></i>
             </div>
+            <!--
             <div class="icon i-right">
               <i  class="icon-favorite" ></i>
             </div>
+            -->
           </div>
         </div>
         
@@ -86,9 +88,11 @@
             <i @click.stop="togglePlaying" :class="playClass" class="icon-mini"></i>
           </progress-circle>
         </div>
+        <!--
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
+        -->
       </div>
     </transition>
     <audio ref="audio" :src="currentSong.url " @canplay="ready" @error="error" @timeupdate="updateTime"
@@ -138,7 +142,7 @@
         return this.playing ? 'play' :'pause'
       },
       playClass(){
-        return this.playing ? 'icon-pause' : 'icon-play'
+        return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
       },
 			...mapGetters([
 				'playList',
@@ -291,6 +295,7 @@
           })
         }
       },
+      
       formatTime(number){
         let time = number | 0
         let minute = (time / 60) | 0
@@ -302,6 +307,7 @@
       },
       error(){
         this.audioReady = true
+        this.next()
       },
       ready(){
         this.audioReady = true
@@ -328,30 +334,41 @@
       prev(){
         if(!this.audioReady)
           return 
-        let index = this.currentIndex - 1
-        //循环播放
-        if(index < 0){
-          index = this.playList.length - 1
+        if(this.playList.length >= 1){
+          let index = this.currentIndex - 1
+          //循环播放
+          if(index < 0){
+            index = this.playList.length - 1
+          }
+          this.setCurrentIndex(index)
+          if(!this.playing){
+            this.togglePlaying()
+          }
+          this.audioReady = false
+        }else{
+          this.$refs.audio.currentTime = 0
         }
-        this.setCurrentIndex(index)
-        if(!this.playing){
-          this.togglePlaying()
-        }
-        this.audioReady = false
+        
       },
       next(){
         if(!this.audioReady)
           return 
-        let index = this.currentIndex + 1
-        if(index > this.playList.length - 1){
-          index = 0
+        console.log('playlist',this.playList)
+        if(this.playList.length > 1){
+        
+          let index = this.currentIndex + 1
+          if(index > this.playList.length - 1){
+            index = 0
+          }
+          this.setCurrentIndex(index)
+          if(!this.playing){
+            this.togglePlaying()
+          }
+          this.audioReady = false
+        }else{
+          this.$refs.audio.currentTime = 0
         }
-        this.setCurrentIndex(index)
-        if(!this.playing){
-          this.togglePlaying()
-        }
-        this.audioReady = false
-
+        
       },
       togglePlaying(){
         this.setPlayingState(!this.playing)
@@ -658,7 +675,7 @@
             padding: 0 20px
             text-align: center
             i
-              font-size: 40px
+              font-size: 30px
           .i-right
             text-align: left
           .icon-favorite
@@ -717,13 +734,14 @@
         flex: 0 0 30px
         width: 30px
         padding: 0 10px
+        margin-right:24px
         .icon-play-mini, .icon-pause-mini, .icon-playlist
           font-size: 30px
           color: $color-theme-d
         .progress-circle
           position:relative
           .icon-mini
-            font-size: 24px
+            font-size: 32px
             position: absolute
             left: 50%
             top: 50%
