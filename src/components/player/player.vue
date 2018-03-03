@@ -1,11 +1,6 @@
 <template>
   <div class="player" v-show="playList.length>0">
-    <transition name="normal"
-                @enter="enter"
-                @after-enter="afterEnter"
-                @leave="leave"
-                @after-leave="afterLeave"
-                
+    <transition name="normal"         
     >
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
@@ -123,7 +118,7 @@
         currentLineNum:0,
         currentShow:'cd',
         playingLyric:'',
-        first__:true
+        first__:true //移动端audio无法自动播放，所以在用户交互事件中执行audio.play()
       }
     },
     computed:{
@@ -161,7 +156,7 @@
     },
     methods:{
       __play(){
-        //console.log('touchstart')
+       
         this.$refs.audio.play()
         window.removeEventListener('touchstart',this.__play)
         this.$refs.audio.currentTime = 0
@@ -313,7 +308,7 @@
         this.audioReady = true
         if(this.first__){
            window.addEventListener('touchstart',this.__play)
-           this.first = false
+           this.first__ = false
         }
       },
       end(){
